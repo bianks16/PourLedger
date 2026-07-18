@@ -1,6 +1,6 @@
 workflows:
   sample-workflow:
-    name: workflow
+    name: iOS TestFlight
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
@@ -10,27 +10,32 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.pouredledger.PourLedger
       vars:
-        APP_STORE_CONNECT_KEY: pour_ledger
         APP_STORE_APPLE_ID: 6792364905
         BUNDLE_ID: "com.pouredledger.PourLedger"
         XCODE_PROJECT: "PourLedger.xcodeproj"
         XCODE_SCHEME: "PourLedger"
+      xcode: latest
     scripts:
-      - name: Clean and Resolve SPM Dependencies
+      - name: Clean build folder
         script: |
-          # Очистка для избежания проблем с кэшем
           rm -rf ~/Library/Developer/Xcode/DerivedData
-          rm -rf .build
           xcodebuild clean -project "$CM_BUILD_DIR/$XCODE_PROJECT" -scheme "$XCODE_SCHEME"
-          xcodebuild -resolvePackageDependencies -project "$CM_BUILD_DIR/$XCODE_PROJECT" -scheme "$XCODE_SCHEME"
-      - name: Set up provisioning profiles settings on Xcode project
+      - name: Set up provisioning profiles
         script: xcode-project use-profiles
       - name: Increment build number
-        script: | 
+        script: |
           #!/bin/sh
-          cd $CM_BUILD_DIR
-          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          agvtool new-version -all 1
+          set -e
+          cd "$CM_BUILD_DIR"
+          # Take the latest build already on TestFlight and add 1 so App Store Connect
+          # never rejects a duplicate build number.
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          NEW_BUILD_NUMBER=$(( ${LATEST_BUILD_NUMBER:-0} + 1 ))
+          echo "Setting CURRENT_PROJECT_VERSION (CFBundleVersion) to $NEW_BUILD_NUMBER"
+          # This project uses GENERATE_INFOPLIST_FILE=YES, so CFBundleVersion is driven
+          # by CURRENT_PROJECT_VERSION in the pbxproj (agvtool can't set it here because
+          # the project has no apple-generic versioning system).
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9][0-9]*;/CURRENT_PROJECT_VERSION = $NEW_BUILD_NUMBER;/g" "$XCODE_PROJECT/project.pbxproj"
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
@@ -39,12 +44,11 @@ workflows:
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_KEY
         auth: integration
-        submit_to_app_store: true
-        cancel_previous_submissions: true
-        release_type: SCHEDULED
+        submit_to_testflight: true
+        # Optional: auto-distribute to an external TestFlight group once processed.
+        # beta_groups:
+        #   - Testers
