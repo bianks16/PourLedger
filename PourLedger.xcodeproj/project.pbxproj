@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EEDAA711300BA6BD003C18BC /* CLOUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = EEDAA70F300BA6B1003C18BC /* CLOUDE.md */; };
+		EEDAA711300BA6BD003C18BC /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = EEDAA70F300BA6B1003C18BC /* CLAUDE.md */; };
+		EEDAA7FA300C1A53003C18BC /* codemagic.yaml in Resources */ = {isa = PBXBuildFile; fileRef = EEDAA7F9300C1A53003C18BC /* codemagic.yaml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		EEDAA70F300BA6B1003C18BC /* CLOUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLOUDE.md; sourceTree = "<group>"; };
+		EEDAA70F300BA6B1003C18BC /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		EEDAA7F9300C1A53003C18BC /* codemagic.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = codemagic.yaml; sourceTree = "<group>"; };
 		EEF6F7B7300B9F7800992674 /* PourLedger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PourLedger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -50,7 +52,8 @@
 		EEF6F7AE300B9F7800992674 = {
 			isa = PBXGroup;
 			children = (
-				EEDAA70F300BA6B1003C18BC /* CLOUDE.md */,
+				EEDAA7F9300C1A53003C18BC /* codemagic.yaml */,
+				EEDAA70F300BA6B1003C18BC /* CLAUDE.md */,
 				EEF6F7B9300B9F7800992674 /* PourLedger */,
 				EEF6F7B8300B9F7800992674 /* Products */,
 			);
@@ -128,7 +131,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEDAA711300BA6BD003C18BC /* CLOUDE.md in Resources */,
+				EEDAA711300BA6BD003C18BC /* CLAUDE.md in Resources */,
+				EEDAA7FA300C1A53003C18BC /* codemagic.yaml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
